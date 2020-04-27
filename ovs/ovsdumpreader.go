@@ -25,7 +25,7 @@ var (
 	bucketAction   *regexp.Regexp = regexp.MustCompile("actions=(.*?),?$")
 	groupStatsLine *regexp.Regexp = regexp.MustCompile(`group_id=(?P<groupid>.*?),duration=(?P<duration>[^,]*)s,(?P<counts>.*$)`)
 	countLine      *regexp.Regexp = regexp.MustCompile("ref_count=(?P<ref_count>[0-9]+),packet_count=(?P<packet_count>[0-9]+),byte_count=(?P<byte_count>[0-9]+).*")
-	CliDumpReader  OvsDumpReader  = OvsDumpReader{OvsDumpSourceTest{}}
+	CliDumpReader  OvsDumpReader  = OvsDumpReader{OvsDumpSource{}}
 )
 
 func getRegexpMap(match []string, names []string) map[string]string {

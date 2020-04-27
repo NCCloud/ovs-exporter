@@ -11,22 +11,22 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/leannetworking/ovs-exporter/ovs"
+	"github.com/biwwy0/ovs-exporter/ovs"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 //the TCP port that this scripts listens
-var listenPort string = ":8081"
+var listenPort string = ":9981"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	target := r.URL.Query().Get("target")
 	if target == "" {
-		http.Error(w, "Bad request!\nCorrect format is: http://"+r.Host+"/flows?target=<targetIP>", 400)
+		http.Error(w, "Bad request!\nCorrect format is: http://"+r.Host+"/metrics?target=<targetIP>", 400)
 		return
 	}
 	c := OvsPromCollector{
-		ip:        target,
+		iface:        target,
 		port:      ovs.OvsDefaultPort,
 		ovsReader: ovs.CliDumpReader,
 	}

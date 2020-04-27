@@ -2,7 +2,7 @@ package ovs
 
 //the passive TCP port where OVS entries are listening
 //for OpenFlow commands
-const OvsDefaultPort int = 16633
+const OvsDefaultPort int = 6633
 
 type OvsStatReader interface {
 	Flows(ip string, port int) ([]Flow, error)

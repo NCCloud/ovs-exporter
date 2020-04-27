@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/leannetworking/ovs-exporter/ovs"
+	"github.com/biwwy0/ovs-exporter/ovs"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
 type OvsPromCollector struct {
-	ip        string
+	iface     string
 	port      int
 	ovsReader ovs.OvsStatReader
 }

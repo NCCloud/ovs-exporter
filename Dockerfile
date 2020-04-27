@@ -17,7 +17,7 @@ RUN cd /root/go/src/github.com/leannetworking/ovs-exporter \
     && go get -d \
     && go build .
 
-FROM alpine:3.9 
+FROM alpine:3.9
 
 MAINTAINER "LeanNet" <info@leannet.eu>
 

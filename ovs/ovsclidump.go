@@ -25,11 +25,11 @@ func ovsCtlRun(params ...string) ([]string, error) {
 }
 
 func (o OvsDumpSourceCLI) DumpFlows(ip string, port int) ([]string, error) {
-	return ovsCtlRun("dump-flows", "tcp:"+ip+":"+strconv.Itoa(port))
+	return ovsCtlRun("dump-flows", "br-int"))
 }
 
 func (o OvsDumpSourceCLI) DumpPorts(ip string, port int) ([]string, error) {
-	return ovsCtlRun("dump-ports", "tcp:"+ip+":"+strconv.Itoa(port))
+	return ovsCtlRun("dump-ports", "br-int")
 }
 
 func (o OvsDumpSourceCLI) DumpGroups(ip string, port int) ([]string, error) {
