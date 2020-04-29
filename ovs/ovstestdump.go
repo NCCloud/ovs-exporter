@@ -25,18 +25,18 @@ func fileToLines(fname string) ([]string, error) {
 	return lines, nil
 }
 
-func (o OvsDumpSourceTest) DumpFlows(ip string, port int) ([]string, error) {
+func (o OvsDumpSourceTest) DumpFlows(iface string, port int) ([]string, error) {
 	return fileToLines(FLOWS)
 }
 
-func (o OvsDumpSourceTest) DumpPorts(ip string, port int) ([]string, error) {
+func (o OvsDumpSourceTest) DumpPorts(iface string, port int) ([]string, error) {
 	return fileToLines(PORTS)
 }
 
-func (o OvsDumpSourceTest) DumpGroups(ip string, port int) ([]string, error) {
+func (o OvsDumpSourceTest) DumpGroups(iface string, port int) ([]string, error) {
 	return fileToLines(GROUPS)
 }
 
-func (o OvsDumpSourceTest) DumpGroupStats(ip string, port int) ([]string, error) {
+func (o OvsDumpSourceTest) DumpGroupStats(iface string, port int) ([]string, error) {
 	return fileToLines(GROUP_STATS)
 }

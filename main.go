@@ -22,11 +22,11 @@ var listenPort string = ":9981"
 func handler(w http.ResponseWriter, r *http.Request) {
 	target := r.URL.Query().Get("target")
 	if target == "" {
-		http.Error(w, "Bad request!\nCorrect format is: http://"+r.Host+"/metrics?target=<targetIP>", 400)
-		return
+		target = "127.0.0.1"
 	}
+	
 	c := OvsPromCollector{
-		iface:        target,
+		ip:        target,
 		port:      ovs.OvsDefaultPort,
 		ovsReader: ovs.CliDumpReader,
 	}

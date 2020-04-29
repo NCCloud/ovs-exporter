@@ -8,10 +8,10 @@ import (
 )
 
 type OvsDumpSource interface {
-	DumpFlows(ip string, port int) ([]string, error)
+//	DumpFlows(ip string, port int) ([]string, error)
 	DumpPorts(ip string, port int) ([]string, error)
-	DumpGroups(ip string, port int) ([]string, error)
-	DumpGroupStats(ip string, port int) ([]string, error)
+//	DumpGroups(ip string, port int) ([]string, error)
+//	DumpGroupStats(ip string, port int) ([]string, error)
 }
 
 type OvsDumpReader struct {
@@ -25,7 +25,7 @@ var (
 	bucketAction   *regexp.Regexp = regexp.MustCompile("actions=(.*?),?$")
 	groupStatsLine *regexp.Regexp = regexp.MustCompile(`group_id=(?P<groupid>.*?),duration=(?P<duration>[^,]*)s,(?P<counts>.*$)`)
 	countLine      *regexp.Regexp = regexp.MustCompile("ref_count=(?P<ref_count>[0-9]+),packet_count=(?P<packet_count>[0-9]+),byte_count=(?P<byte_count>[0-9]+).*")
-	CliDumpReader  OvsDumpReader  = OvsDumpReader{OvsDumpSource{}}
+	CliDumpReader  OvsDumpReader  = OvsDumpReader{OvsDumpSourceCLI{}}
 )
 
 func getRegexpMap(match []string, names []string) map[string]string {
@@ -62,7 +62,8 @@ func parseOpenFlowFlowDumpLine(line string) Flow {
 
 func parseOpenFlowPortDumpLine(first_line, second_line string) Port {
 	line := first_line + second_line
-	line = strings.Replace(line, "=?", "=0", -1)
+	line = strings.ReplaceAll(line, "=?", "=0")
+	line = strings.ReplaceAll(line, "\"", "")
 	match := portLine.FindStringSubmatch(line)
 	result := getRegexpMap(match, portLine.SubexpNames())
 	rxpackets, _ := strconv.Atoi(result["rxpackets"])
@@ -138,19 +139,19 @@ func parseOpenFlowGroupStatsDumpLine(line string, groupIdMap map[string]*Group) 
 	}
 }
 
-func (o OvsDumpReader) Flows(ip string, port int) ([]Flow, error) {
-	lines, err := o.dumpSource.DumpFlows(ip, port)
-	//if error was occured we return
-	if err != nil {
-		return nil, err
-	}
-	entrySet := make([]Flow, len(lines))
-	for i, entry := range lines {
-		flowEntry := parseOpenFlowFlowDumpLine(entry)
-		entrySet[i] = flowEntry
-	}
-	return entrySet, nil
-}
+//func (o OvsDumpReader) Flows(ip string, port int) ([]Flow, error) {
+//	lines, err := o.dumpSource.DumpFlows(ip, port)
+//	//if error was occured we return
+//	if err != nil {
+//		return nil, err
+//	}
+//	entrySet := make([]Flow, len(lines))
+//	for i, entry := range lines {
+//		flowEntry := parseOpenFlowFlowDumpLine(entry)
+//		entrySet[i] = flowEntry
+//	}
+//	return entrySet, nil
+//}
 
 func (o OvsDumpReader) Ports(ip string, port int) ([]Port, error) {
 	lines, err := o.dumpSource.DumpPorts(ip, port)
@@ -169,33 +170,33 @@ func (o OvsDumpReader) Ports(ip string, port int) ([]Port, error) {
 	return entrySet, nil
 }
 
-func (o OvsDumpReader) Groups(ip string, port int) ([]Group, error) {
-	groupLines, err := o.dumpSource.DumpGroups(ip, port)
-
-	//if error was occured we return
-	if err != nil {
-		return nil, err
-	}
-
-	groupStatLines, err := o.dumpSource.DumpGroupStats(ip, port)
-	//if error was occured we return
-	if err != nil {
-		return nil, err
-	}
-
-	//if command was succesfull we further parse the output
-	groupEntries := make([]Group, len(groupLines))
-	groupIdMap := make(map[string]*Group)
-
-	for i, line := range groupLines {
-		groupEntry := parseOpenFlowGroupsDumpLine(line)
-		groupEntries[i] = groupEntry
-		groupIdMap[groupEntry.GroupId] = &groupEntries[i]
-	}
-
-	for _, line := range groupStatLines {
-		parseOpenFlowGroupStatsDumpLine(line, groupIdMap)
-	}
-
-	return groupEntries, nil
-}
+//func (o OvsDumpReader) Groups(ip string, port int) ([]Group, error) {
+//	groupLines, err := o.dumpSource.DumpGroups(ip, port)
+//
+//	//if error was occured we return
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	groupStatLines, err := o.dumpSource.DumpGroupStats(ip, port)
+//	//if error was occured we return
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	//if command was succesfull we further parse the output
+//	groupEntries := make([]Group, len(groupLines))
+//	groupIdMap := make(map[string]*Group)
+//
+//	for i, line := range groupLines {
+//		groupEntry := parseOpenFlowGroupsDumpLine(line)
+//		groupEntries[i] = groupEntry
+//		groupIdMap[groupEntry.GroupId] = &groupEntries[i]
+//	}
+//
+//	for _, line := range groupStatLines {
+//		parseOpenFlowGroupStatsDumpLine(line, groupIdMap)
+//	}
+//
+//	return groupEntries, nil
+//}
