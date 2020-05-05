@@ -12,29 +12,29 @@ type OvsPromCollector struct {
 }
 
 var (
-//	flowPacketsDesc = prometheus.NewDesc(
-//		"flowPackets",
-//		"The number of packets matched for the given OpenFlow entry.",
-//		[]string{"match", "action", "table", "priority"},
-//		nil)
-//
-//	flowBytesDesc = prometheus.NewDesc(
-//		"flowBytes",
-//		"The number of bytes matched for the given OpenFlow entry",
-//		[]string{"match", "action", "table", "priority"},
-//		nil)
-//
-//	flowAgeDesc = prometheus.NewDesc(
-//		"flowAge",
-//		"The number of seconds have passed since the given OpenFlow entry was created",
-//		[]string{"match", "action", "table", "priority"},
-//		nil)
-//
-//	flowIdleTimeDesc = prometheus.NewDesc(
-//		"flowIdleTime",
-//		"The number of seconds have passed since the last packet has seen for the given OpenFlow entry",
-//		[]string{"match", "action", "table", "priority"},
-//		nil)
+	flowPacketsDesc = prometheus.NewDesc(
+		"flowPackets",
+		"The number of packets matched for the given OpenFlow entry.",
+		[]string{"match", "action", "table", "priority"},
+		nil)
+
+	flowBytesDesc = prometheus.NewDesc(
+		"flowBytes",
+		"The number of bytes matched for the given OpenFlow entry",
+		[]string{"match", "action", "table", "priority"},
+		nil)
+
+	flowAgeDesc = prometheus.NewDesc(
+		"flowAge",
+		"The number of seconds have passed since the given OpenFlow entry was created",
+		[]string{"match", "action", "table", "priority"},
+		nil)
+
+	flowIdleTimeDesc = prometheus.NewDesc(
+		"flowIdleTime",
+		"The number of seconds have passed since the last packet has seen for the given OpenFlow entry",
+		[]string{"match", "action", "table", "priority"},
+		nil)
 
 	portRxPacketsDesc = prometheus.NewDesc(
 		"portRxPackets",
@@ -126,51 +126,51 @@ func (c OvsPromCollector) Collect(ch chan<- prometheus.Metric) {
 	//	- age of the flow as "flowAge" type Gauge
 	//	- idle time as "flowIdleTime" type Gauge
 
-//	flowEntries, err := c.ovsReader.Flows(c.ip, c.port)
-//
-//	if err != nil {
-//		ch <- prometheus.NewInvalidMetric(prometheus.NewDesc("ovs_error", "Error parsing flow dump", nil, nil), err)
-//		return
-//	}
-//
-//	for _, entry := range flowEntries {
-//
-//		ch <- prometheus.MustNewConstMetric(
-//			flowPacketsDesc,
-//			prometheus.CounterValue,
-//			float64(entry.Packets),
-//			entry.Match,
-//			entry.Action,
-//			entry.Table,
-//			entry.Priority)
-//
-//		ch <- prometheus.MustNewConstMetric(
-//			flowBytesDesc,
-//			prometheus.CounterValue,
-//			float64(entry.Bytes),
-//			entry.Match,
-//			entry.Action,
-//			entry.Table,
-//			entry.Priority)
-//
-//		ch <- prometheus.MustNewConstMetric(
-//			flowAgeDesc,
-//			prometheus.GaugeValue,
-//			float64(entry.Duration),
-//			entry.Match,
-//			entry.Action,
-//			entry.Table,
-//			entry.Priority)
-//
-//		ch <- prometheus.MustNewConstMetric(
-//			flowIdleTimeDesc,
-//			prometheus.GaugeValue,
-//			float64(entry.IdleAge),
-//			entry.Match,
-//			entry.Action,
-//			entry.Table,
-//			entry.Priority)
-//	}
+	flowEntries, err := c.ovsReader.Flows(c.ip, c.port)
+
+	if err != nil {
+		ch <- prometheus.NewInvalidMetric(prometheus.NewDesc("ovs_error", "Error parsing flow dump", nil, nil), err)
+		return
+	}
+
+	for _, entry := range flowEntries {
+
+		ch <- prometheus.MustNewConstMetric(
+			flowPacketsDesc,
+			prometheus.CounterValue,
+			float64(entry.Packets),
+			entry.Match,
+			entry.Action,
+			entry.Table,
+			entry.Priority)
+
+		ch <- prometheus.MustNewConstMetric(
+			flowBytesDesc,
+			prometheus.CounterValue,
+			float64(entry.Bytes),
+			entry.Match,
+			entry.Action,
+			entry.Table,
+			entry.Priority)
+
+		ch <- prometheus.MustNewConstMetric(
+			flowAgeDesc,
+			prometheus.GaugeValue,
+			float64(entry.Duration),
+			entry.Match,
+			entry.Action,
+			entry.Table,
+			entry.Priority)
+
+		ch <- prometheus.MustNewConstMetric(
+			flowIdleTimeDesc,
+			prometheus.GaugeValue,
+			float64(entry.IdleAge),
+			entry.Match,
+			entry.Action,
+			entry.Table,
+			entry.Priority)
+	}
 
 	portEntries, err := c.ovsReader.Ports(c.ip, c.port)
 	//if error was occured we return

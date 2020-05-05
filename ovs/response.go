@@ -10,9 +10,9 @@ type Flow struct {
 	Table       string  `json:"table"`
 	Packets     int     `json:"packets"`
 	Bytes       int     `json:"bytes"`
-	IdleTimeout string  `json:"idletimeout"`
-	IdleAge     int     `json:"idleage"`
-	Priority    string  `json:"proirity"`
+	IdleAge		int     `json:"idle_age"`
+	HardAge		int     `json:"hard_age"`
+	Priority    string  `json:"priority"`
 	Match       string  `json:"match"`
 	Action      string  `json:"action"`
 }

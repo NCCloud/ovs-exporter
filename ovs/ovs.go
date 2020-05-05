@@ -5,7 +5,7 @@ package ovs
 const OvsDefaultPort int = 6633
 
 type OvsStatReader interface {
-//	Flows(ip string, port int) ([]Flow, error)
+	Flows(ip string, port int) ([]Flow, error)
 	Ports(ip string, port int) ([]Port, error)
 //	Groups(ip string, port int) ([]Group, error)
 }

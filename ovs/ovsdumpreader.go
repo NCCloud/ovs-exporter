@@ -8,7 +8,7 @@ import (
 )
 
 type OvsDumpSource interface {
-//	DumpFlows(ip string, port int) ([]string, error)
+	DumpFlows(ip string, port int) ([]string, error)
 	DumpPorts(ip string, port int) ([]string, error)
 //	DumpGroups(ip string, port int) ([]string, error)
 //	DumpGroupStats(ip string, port int) ([]string, error)
@@ -19,7 +19,7 @@ type OvsDumpReader struct {
 }
 
 var (
-	flowLine       *regexp.Regexp = regexp.MustCompile("cookie=(?P<cookie>[^,]*), duration=(?P<duration>[^,]*)s, table=(?P<table>[^,]*), n_packets=(?P<packets>[^,]*), n_bytes=(?P<bytes>[^,]*),( idle_timeout=(?P<idle_timeout>[^,]*),)? idle_age=(?P<idle_age>[^,]*), priority=(?P<priority>[^,]*)(,(?P<match>[^ ]*))? actions=(?P<actions>.*)")
+	flowLine       *regexp.Regexp = regexp.MustCompile("cookie=(?P<cookie>[^,]*), duration=(?P<duration>[^,]*)s, table=(?P<table>[^,]*), n_packets=(?P<packets>[^,]*), n_bytes=(?P<bytes>[^,]*), idle_age=(?P<idle_age>[^,]*), hard_age=(?P<hard_age>[^,]*), priority=(?P<priority>[^,]*)(,(?P<match>[^ ]*))? actions=(?P<actions>.*)")
 	portLine       *regexp.Regexp = regexp.MustCompile(`port\s*(?P<port>[^:]*):\srx\spkts=(?P<rxpackets>[^,]*),\sbytes=(?P<rxbytes>[^,]*),\sdrop=(?P<rxdrops>[^,]*),\serrs=(?P<rxerrors>[^,]*),\sframe=(?P<rxframerr>[^,]*),\sover=(?P<rxoverruns>[^,]*),\scrc=(?P<rxcrcerrors>[^,]*)\s.*tx\spkts=(?P<txpackets>[^,]*),\sbytes=(?P<txbytes>[^,]*),\sdrop=(?P<txdrops>[^,]*),\serrs=(?P<txerrors>[^,]*),\scoll=(?P<txcollisions>.*)`)
 	groupsLine     *regexp.Regexp = regexp.MustCompile(`group_id=(?P<groupid>.*?),\s*type=(?P<type>[^,]*),bucket=(?P<buckets>.*$)`)
 	bucketAction   *regexp.Regexp = regexp.MustCompile("actions=(.*?),?$")
@@ -43,7 +43,8 @@ func parseOpenFlowFlowDumpLine(line string) Flow {
 	duration, _ := strconv.ParseFloat(result["duration"], 64)
 	packets, _ := strconv.Atoi(result["packets"])
 	bytes, _ := strconv.Atoi(result["bytes"])
-	idleAge, _ := strconv.Atoi(result["idle_age"])
+	idleage, _ := strconv.Atoi(result["idle_age"])
+	hardage, _ := strconv.Atoi(result["hard_age"])
 
 	flow := Flow{
 		Cookie:      result["cookie"],
@@ -51,8 +52,8 @@ func parseOpenFlowFlowDumpLine(line string) Flow {
 		Table:       result["table"],
 		Packets:     packets,
 		Bytes:       bytes,
-		IdleTimeout: result["idle_timeout"],
-		IdleAge:     idleAge,
+		IdleAge:	 idleage,
+		HardAge:	 hardage,
 		Priority:    result["priority"],
 		Match:       result["match"],
 		Action:      result["actions"],
@@ -139,19 +140,21 @@ func parseOpenFlowGroupStatsDumpLine(line string, groupIdMap map[string]*Group) 
 	}
 }
 
-//func (o OvsDumpReader) Flows(ip string, port int) ([]Flow, error) {
-//	lines, err := o.dumpSource.DumpFlows(ip, port)
-//	//if error was occured we return
-//	if err != nil {
-//		return nil, err
-//	}
-//	entrySet := make([]Flow, len(lines))
-//	for i, entry := range lines {
-//		flowEntry := parseOpenFlowFlowDumpLine(entry)
-//		entrySet[i] = flowEntry
-//	}
-//	return entrySet, nil
-//}
+func (o OvsDumpReader) Flows(ip string, port int) ([]Flow, error) {
+	lines, err := o.dumpSource.DumpFlows(ip, port)
+	//if error was occured we return
+	if err != nil {
+		return nil, err
+	}
+	entrySet := make([]Flow, len(lines))
+	for i, entry := range lines {
+		flowEntry := parseOpenFlowFlowDumpLine(entry)
+		entrySet[i] = flowEntry
+	}
+	fmt.Println(entrySet)
+
+	return entrySet, nil
+}
 
 func (o OvsDumpReader) Ports(ip string, port int) ([]Port, error) {
 	lines, err := o.dumpSource.DumpPorts(ip, port)
