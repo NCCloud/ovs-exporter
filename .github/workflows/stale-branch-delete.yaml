@@ -10,7 +10,7 @@ on:
 jobs:
   cleanup_branches:
     name: "Branch Cleaner"
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest]
     steps:
       - name: "Manage Stale Branches"
         id: branch_cleaner
