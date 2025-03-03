@@ -10,6 +10,8 @@ on:
 
 jobs:
   pr-lint:
+    # renovate PR titles don't follow our convention; therefore, exclude them
+    if: startsWith(github.head_ref, 'renovate/') != true
     runs-on: [ubuntu-latest]
     steps:
       - uses: morrisoncole/pr-lint-action@v1.7.1
