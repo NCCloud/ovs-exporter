@@ -14,12 +14,38 @@ jobs:
     if: startsWith(github.head_ref, 'renovate/') != true
     runs-on: [ubuntu-latest]
     steps:
-      - uses: morrisoncole/pr-lint-action@v1.7.1
+      - uses: actions/github-script@v7
         with:
-          title-regex: "\\[(CU-.+|[nN][oO][cC][aA][rR][dD]|[wW][iI][pP])\\] .+"
-          on-failed-regex-fail-action: false
-          on-failed-regex-request-changes: true
-          on-failed-regex-create-review: true
-          on-failed-regex-comment:
-            "Pull request title doesn't conform regex: `%regex%`! <br /> More info on this: https://collab.namecheap.net/display/CT/Working+together"
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          script: |
+            const title = context.payload.pull_request.title;
+            const regex = /^\[(CU-.+|[nN][oO][cC][aA][rR][dD]|[wW][iI][pP])\] .+/;
+            const pr = context.payload.pull_request.number;
+
+            if (!regex.test(title)) {
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr,
+                event: 'REQUEST_CHANGES',
+                body: `Pull request title doesn't conform regex: \`${regex}\`! <br /> More info on this: https://collab.namecheap.net/display/CT/Working+together`
+              });
+              return;
+            }
+
+            const reviews = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr,
+            });
+
+            for (const review of reviews.data) {
+              if (review.state === 'CHANGES_REQUESTED' && review.user.type === 'Bot') {
+                await github.rest.pulls.dismissReview({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr,
+                  review_id: review.id,
+                  message: 'PR title now matches the required format.'
+                });
+              }
+            }
