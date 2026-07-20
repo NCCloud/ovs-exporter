@@ -1,3 +1,4 @@
+# This file is managed from the NCCloud/infra-github repository! Add your changes there. Any direct changes here will be overwritten.
 # This workflow warns and then closes issues and PRs that have had no activity for a specified amount of time.
 # https://github.com/crazy-matt/manage-stale-branches
 
