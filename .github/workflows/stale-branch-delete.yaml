@@ -8,6 +8,9 @@ on:
   schedule:
     - cron: '0 8 * * 1' 
 
+permissions:
+  contents: write
+
 jobs:
   cleanup_branches:
     name: "Branch Cleaner"
@@ -15,7 +18,7 @@ jobs:
     steps:
       - name: "Manage Stale Branches"
         id: branch_cleaner
-        uses: crazy-matt/manage-stale-branches@1.1.0
+        uses: crazy-matt/manage-stale-branches@77fbde37d0f2059025b94b367a85d2c2cd061292 # 1.1.0
         with:
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           stale_older_than: 120
